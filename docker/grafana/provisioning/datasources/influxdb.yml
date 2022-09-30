@@ -1,0 +1,13 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: InfluxDB
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    database: speedtest
+    user: admin
+    password: preserje
+    url: http://192.168.123.50:8086

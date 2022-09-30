@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  influxdb:
+    restart: always
+    image: influxdb:2.4
+    container_name: influx-2.4
+    ports:
+      - "8086:8086"
+    volumes:
+      - "./influxdb/lib:/var/lib/influxdb2"
+      - "./influxdb/config:/etc/influxdb2"
+    environment:
+      - "DOCKER_INFLUXDB_INIT_MODE=setup"
+      - "DOCKER_INFLUXDB_INIT_USERNAME=admin"
+      - "DOCKER_INFLUXDB_INIT_PASSWORD=P1reserje"
+      - "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=preserje"
+      - "DOCKER_INFLUXDB_INIT_ORG=Kraki"
+      - "DOCKER_INFLUXDB_INIT_RETENTION=60m"
+      - "DOCKER_INFLUXDB_INIT_HOST=192.168.123.50"
+      - "DOCKER_INFLUXDB_INIT_PORT=8086"
+      - "DOCKER_INFLUXDB_INIT_BUCKET=speedtest"
+
+  grafana:
+    restart: always
+    image: grafana/grafana-oss:8.5.13
+    container_name: grafana-8
+    volumes:
+      - "./docker/grafana/provisioning:/etc/grafana/provisioning"
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      - "GF_SERVER_ROOT_URL=http://localhost"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin"
+      - "GF_AUTH_ANONYMOUS_ENABLED=true"
+    depends_on:
+      - influxdb
+
+  speedtest:
+    restart: always
+    image: feferd/speedtest-ext2:latest
+    container_name: speedtest.ext
+    environment:
+      - "SPEEDTEST_INTERVAL=${SPEEDTEST_SPEEDTEST_INTERVAL}"
+      - "SPEEDTEST_HOST=${SPEEDTEST_HOST}"
+    depends_on:
+      - influxdb

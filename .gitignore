@@ -1,0 +1,4 @@
+data/influxdb/*
+data/grafana/*
+influxdb/*
+.env
